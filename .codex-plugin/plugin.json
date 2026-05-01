@@ -1,0 +1,40 @@
+{
+  "name": "sprites",
+  "version": "0.1.0",
+  "description": "Use Sprites from Codex to create, inspect, and operate remote isolated development environments.",
+  "author": {
+    "name": "Superfly",
+    "url": "https://fly.io"
+  },
+  "homepage": "https://sprites.dev",
+  "repository": "https://github.com/superfly/sprites-codex-plugin",
+  "license": "MIT",
+  "keywords": [
+    "sprites",
+    "development-environments",
+    "mcp",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Sprites",
+    "shortDescription": "Manage remote development sprites from Codex.",
+    "longDescription": "Create, list, inspect, and operate remote Sprites environments from Codex using Sprites MCP tools and workflow guidance.",
+    "developerName": "Superfly",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://sprites.dev",
+    "privacyPolicyURL": "https://fly.io/legal/privacy-policy/",
+    "termsOfServiceURL": "https://fly.io/legal/terms-of-service/",
+    "defaultPrompt": [
+      "Use Sprites to list my active development environments.",
+      "Use Sprites to create a new remote environment for this repo and run the tests.",
+      "Use Sprites to inspect services and logs for a selected sprite."
+    ],
+    "brandColor": "#8AE234"
+  }
+}

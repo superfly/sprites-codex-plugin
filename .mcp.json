@@ -1,0 +1,8 @@
+{
+  "mcp_servers": {
+    "sprites": {
+      "url": "https://sprites.dev/mcp",
+      "tool_timeout_sec": 300
+    }
+  }
+}
