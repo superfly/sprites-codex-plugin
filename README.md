@@ -1,73 +1,91 @@
 # Sprites Codex Plugin
 
-This repository contains the Codex plugin for Sprites. It bundles:
+Use Sprites from Codex to create, inspect, and operate remote development environments.
 
-- A Codex plugin manifest at `.codex-plugin/plugin.json`.
-- A Sprites MCP server configuration in `.mcp.json`.
-- A first-pass Sprites skill in `skills/sprites/SKILL.md`.
-- A local marketplace file for testing in `.agents/plugins/marketplace.json`.
+Sprites are isolated cloud environments with their own filesystem, URL, services, checkpoints, and network policy. This plugin connects Codex to the Sprites MCP server so Codex can manage those remote environments without treating your local shell as the sprite runtime.
 
-The plugin is intentionally small. The Sprites API owns the `/mcp` endpoint, OAuth, token restrictions, tool schemas, and runtime behavior. This repo owns Codex packaging and agent workflow guidance for Codex operating Sprites remotely through MCP.
+## What You Can Do
 
-## Framing
+With this plugin enabled, you can ask Codex to:
 
-Codex runs outside a sprite. This plugin should consistently describe Sprites as remote environments managed through the Sprites MCP server, not as the local shell where Codex is running.
+- List your active sprites.
+- Create a fresh remote environment for a task.
+- Inspect a sprite's files, services, logs, checkpoints, and network policy.
+- Run commands, tests, builds, and diagnostics inside a selected sprite.
+- Start long-running services such as dev servers, background workers, and databases.
+- Create checkpoints before risky changes.
+- Clean up services or destroy sprites when you explicitly ask for that.
 
-When the skill needs to inspect or change a sprite, it should tell Codex to use sprite-scoped MCP tools such as `exec`, `service_list`, `logs`, checkpoints, and network policy tools. Local plugin development in this repository is separate from remote sprite operation.
+## Requirements
 
-## Local Development
+- Codex with plugin support.
+- Access to Sprites for your organization.
+- Permission to authenticate Codex with the Sprites MCP server.
 
-From this repo, add the local marketplace to Codex:
+## Installation
+
+Install the `Sprites` plugin from the Codex plugin marketplace.
+
+For local installation from this repository:
 
 ```sh
 codex plugin marketplace add .
 ```
 
-Restart Codex, open the plugin directory, choose the `Sprites Codex Plugin` marketplace, and install `Sprites`.
+Then restart Codex, open the plugin directory, choose the `Sprites Codex Plugin` marketplace, and install `Sprites`.
 
-If the MCP server needs OAuth login from the CLI:
+## Authentication
 
-```sh
-codex mcp login sprites
-```
-
-## Plugin Layout
-
-```text
-.
-├── .agents/plugins/marketplace.json
-├── .codex-plugin/plugin.json
-├── .mcp.json
-├── assets/
-└── skills/sprites/SKILL.md
-```
-
-## Iterating On The Skill
-
-Most iteration should happen in `skills/sprites/SKILL.md`.
-
-Good changes to make there:
-
-- Tighten rules for when to create versus reuse a sprite.
-- Add preferred naming conventions.
-- Add task-specific workflows for remote web apps, test runs, and long-running services.
-- Refine safety rules around public URLs, secrets, checkpoints, and destructive actions.
-- Add known troubleshooting paths as Sprites MCP tools evolve.
-
-After changing the plugin, restart Codex so the local marketplace install picks up the updated files.
-
-## MCP Server
-
-The bundled MCP config points at:
+The plugin uses the Sprites MCP server at:
 
 ```text
 https://sprites.dev/mcp
 ```
 
-The server advertises OAuth metadata and supports `sprites:read` and `sprites:write` scopes. The Sprites API currently exposes management tools such as `list_sprites`, `create_sprite`, and `destroy_sprite`, plus sprite-scoped tools generated from the `sprite-env` schema. Those tools let Codex operate a remote sprite without treating Codex's local shell as the sprite runtime.
+When Codex needs access, it may prompt you to authenticate. You can also start the login flow from the CLI:
 
-For local Sprites API testing, use a tunnel as documented in `sprites-api/docs/local_development.md`, then temporarily change `.mcp.json` to the tunnel URL.
+```sh
+codex mcp login sprites
+```
 
-## Release Notes
+## Example Prompts
 
-Initial version: `0.1.0`.
+- "Use Sprites to list my active development environments."
+- "Use Sprites to create a new remote environment for this repo and run the tests."
+- "Use Sprites to inspect services and logs for a selected sprite."
+- "Create a checkpoint in my `api-debug` sprite, then run the failing test."
+- "Start the web service in my sprite and give me the URL."
+
+## How Codex Uses Sprites
+
+Codex runs outside the sprite. The plugin teaches Codex to use Sprites MCP tools as the control plane for remote work.
+
+That means:
+
+- Your local Codex workspace is separate from a sprite's filesystem.
+- Commands that should run in a sprite are run through sprite-scoped MCP tools.
+- Long-running processes should usually be managed as sprite services.
+- Checkpoints are available for reversible remote filesystem changes.
+- Network access is controlled by the sprite's network policy.
+
+Codex will normally list sprites first, reuse an existing sprite when it clearly matches your task, and create a new sprite when you ask for one or when no suitable sprite exists.
+
+## Safety Notes
+
+Treat any HTTP service in a sprite as potentially internet-accessible. Do not expose secrets, environment variables, tokens, arbitrary file contents, debug endpoints, or unfiltered logs through a sprite URL.
+
+Destroying a sprite is irreversible. It deletes the writable filesystem overlay, services, checkpoints, and URL. Codex should only destroy a sprite when you explicitly ask it to delete, destroy, or remove that sprite.
+
+## Troubleshooting
+
+If Codex cannot see Sprites tools, confirm that the plugin is installed and restart Codex.
+
+If authentication fails, rerun:
+
+```sh
+codex mcp login sprites
+```
+
+If a command inside a sprite cannot reach the network, ask Codex to inspect the sprite network policy before changing it.
+
+If a web service is not reachable, ask Codex to inspect the sprite's services, logs, and configured HTTP port.
