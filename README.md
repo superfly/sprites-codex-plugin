@@ -42,11 +42,7 @@ The plugin uses the Sprites MCP server at:
 https://sprites.dev/mcp
 ```
 
-When Codex needs access, it may prompt you to authenticate. You can also start the login flow from the CLI:
-
-```sh
-codex mcp login sprites
-```
+When Codex needs access, it will prompt you to authenticate through the plugin flow.
 
 ## Example Prompts
 
@@ -80,11 +76,9 @@ Destroying a sprite is irreversible. It deletes the writable filesystem overlay,
 
 If Codex cannot see Sprites tools, confirm that the plugin is installed and restart Codex.
 
-If authentication fails, rerun:
+Codex should not ask you to manually run `codex mcp add sprites --url https://sprites.dev/mcp` during normal Sprites use. If it does, restart Codex or reinstall/refresh the plugin so the plugin-provided MCP server is loaded.
 
-```sh
-codex mcp login sprites
-```
+If authentication fails during plugin install or first use, retry the plugin authorization flow from Codex. Avoid starting a separate CLI login unless you are deliberately debugging a manually registered MCP server.
 
 If a command inside a sprite cannot reach the network, ask Codex to inspect the sprite network policy before changing it.
 
