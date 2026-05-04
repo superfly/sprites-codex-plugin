@@ -1,4 +1,4 @@
-# Sprites Codex Plugin
+# Sprites
 
 Use Sprites from Codex to create, inspect, and operate remote development environments.
 
@@ -32,7 +32,7 @@ For local installation from this repository:
 codex plugin marketplace add .
 ```
 
-Then restart Codex, open the plugin directory, choose the `Sprites Codex Plugin` marketplace, and install `Sprites`.
+Then restart Codex, open the plugin directory, choose the `Sprites` marketplace, and install `Sprites`.
 
 ## Authentication
 
