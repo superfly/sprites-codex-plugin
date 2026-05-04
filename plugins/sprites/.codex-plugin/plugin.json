@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Use Sprites from Codex to create, inspect, and operate remote isolated development environments.",
   "author": {
-    "name": "Superfly",
+    "name": "Fly.io",
     "url": "https://fly.io"
   },
   "homepage": "https://sprites.dev",
@@ -21,7 +21,7 @@
     "displayName": "Sprites",
     "shortDescription": "Manage remote development sprites from Codex.",
     "longDescription": "Create, list, inspect, and operate remote Sprites environments from Codex using Sprites MCP tools and workflow guidance.",
-    "developerName": "Superfly",
+    "developerName": "Fly.io",
     "category": "Developer Tools",
     "capabilities": [
       "Read",

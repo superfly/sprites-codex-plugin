@@ -8,7 +8,7 @@
       "name": "sprites",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/sprites"
       },
       "policy": {
         "installation": "AVAILABLE",
