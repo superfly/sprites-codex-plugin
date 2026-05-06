@@ -34,6 +34,8 @@
       "Use Sprites to create a new remote environment for this repo and run the tests.",
       "Use Sprites to inspect services and logs for a selected sprite."
     ],
-    "brandColor": "#8AE234"
+    "brandColor": "#8AE234",
+    "composerIcon": "./assets/sprites-logo.svg",
+    "logo": "./assets/sprites-logo.svg"
   }
 }
