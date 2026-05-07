@@ -54,7 +54,7 @@ Inspect or operate a sprite:
 
 1. Identify the target sprite.
 2. Use `capabilities`, `service_list`, `logs`, or targeted `exec` based on the task.
-3. Prefer MCP service tools over running `sprite-env services` through `exec`.
+3. Prefer MCP service tools for service inspection and lifecycle work.
 4. Use services for long-running processes and `exec` for short commands.
 
 ## Codex vs Sprite Context
@@ -67,7 +67,7 @@ Keep these contexts distinct:
 
 Do not assume Codex's local shell is inside a sprite. To inspect or change a sprite, use Sprites MCP tools.
 
-If sprite-specific guidance files exist, read them remotely with `exec` only when relevant. Examples include `/.sprite/llm.txt`, `llm-dev.txt`, repository `AGENTS.md`, or project docs inside the sprite. Do not try to read `/.sprite/...` from Codex's local filesystem.
+If sprite-specific guidance files exist, read them remotely with `exec` only when relevant. Common examples include repository guidance files or project docs inside the sprite.
 
 ## Safety
 
@@ -80,7 +80,7 @@ Never create HTTP endpoints that expose:
 - Debug, admin, status, or process endpoints that dump internals.
 - Unfiltered logs, stack traces, system paths, or user data.
 
-Destroying a sprite is irreversible. It deletes the writable filesystem overlay, services, checkpoints, and URL. Only call `destroy_sprite` when the user explicitly asks to delete, destroy, or remove a sprite, or when they approve cleanup.
+Destroying a sprite is irreversible. It deletes the environment state, services, checkpoints, and URL. Only call `destroy_sprite` when the user explicitly asks to delete, destroy, or remove a sprite, or when they approve cleanup.
 
 For risky filesystem changes, package installs, migrations, or broad refactors inside a sprite, create a checkpoint first and mention the checkpoint id.
 

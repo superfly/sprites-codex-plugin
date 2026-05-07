@@ -70,7 +70,7 @@ Codex will normally list sprites first, reuse an existing sprite when it clearly
 
 Treat any HTTP service in a sprite as potentially internet-accessible. Do not expose secrets, environment variables, tokens, arbitrary file contents, debug endpoints, or unfiltered logs through a sprite URL.
 
-Destroying a sprite is irreversible. It deletes the writable filesystem overlay, services, checkpoints, and URL. Codex should only destroy a sprite when you explicitly ask it to delete, destroy, or remove that sprite.
+Destroying a sprite is irreversible. It deletes the environment state, services, checkpoints, and URL. Codex should only destroy a sprite when you explicitly ask it to delete, destroy, or remove that sprite.
 
 ## Troubleshooting
 
