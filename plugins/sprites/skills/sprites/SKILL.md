@@ -26,13 +26,12 @@ Use the smallest direct tool for the request:
 - List sprites: `list_sprites`.
 - Create a sprite: `create_sprite`, then `list_sprites` only if the user asked to see the updated list.
 - Delete a sprite: `destroy_sprite`, only after explicit delete/destroy/remove intent.
-- Run a one-off command in a sprite: `exec`.
+- Run a one-off command in a sprite: `exec`. Inspect or stop exec sessions with `exec_list` and `exec_kill`.
 - Inspect services: `service_list` and `service_get`.
-- Manage services: `service_create`, `service_start`, `service_stop`, `service_restart`, `service_delete`, `service_signal`.
-- Inspect logs: `logs`.
-- Manage checkpoints: `checkpoint_create`, `checkpoint_list`, `checkpoint_get`, `checkpoint_restore`, `checkpoint_delete`.
+- Manage services: `service_create`, `service_start`, `service_stop`.
+- Inspect service logs: `service_logs`.
+- Manage checkpoints: `checkpoint_create`, `checkpoint_list`, `checkpoint_get`, `checkpoint_restore`.
 - Inspect or change network policy: `policy_network_get`, `policy_network_update`.
-- Discover sprite-scoped capabilities: `capabilities`.
 
 Sprite-scoped tools usually require a `sprite` argument. If the user did not name a sprite and the task needs one, call `list_sprites` and choose the obvious match; ask a short clarification only when there is no clear choice.
 
@@ -53,7 +52,7 @@ Create a sprite:
 Inspect or operate a sprite:
 
 1. Identify the target sprite.
-2. Use `capabilities`, `service_list`, `logs`, or targeted `exec` based on the task.
+2. Use `service_list`, `service_logs`, or targeted `exec` based on the task.
 3. Prefer MCP service tools for service inspection and lifecycle work.
 4. Use services for long-running processes and `exec` for short commands.
 
