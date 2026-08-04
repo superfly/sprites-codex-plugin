@@ -44,6 +44,13 @@ https://sprites.dev/mcp
 
 When Codex needs access, it will prompt you to authenticate through the plugin flow.
 
+## Usage Attribution
+
+The plugin marks its hosted MCP requests as Codex-driven using the coarse,
+privacy-safe [`client-signals`](https://github.com/superfly/client-signals)
+headers. The marker is advisory analytics only and is never used for access
+control, gating, or rate-limiting.
+
 ## Example Prompts
 
 - "Use Sprites to list my active development environments."
