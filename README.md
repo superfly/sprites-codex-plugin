@@ -46,10 +46,25 @@ When Codex needs access, it will prompt you to authenticate through the plugin f
 
 ## Usage Attribution
 
-The plugin marks its hosted MCP requests as Codex-driven using the coarse,
+The plugin attributes its hosted MCP requests to Codex using the coarse,
 privacy-safe [`client-signals`](https://github.com/superfly/client-signals)
-headers. The marker is advisory analytics only and is never used for access
-control, gating, or rate-limiting.
+headers. It sends two fixed values on every request to `https://sprites.dev/mcp`:
+
+```text
+Fly-Client-Agent: codex
+Fly-Client-Interactive: false
+```
+
+`Fly-Client-Agent` is the attribution marker. `Fly-Client-Interactive` is the
+instrumentation sentinel that `client-signals` requires before it will read the
+marker at all; a static plugin configuration cannot observe whether a given
+Codex session is attached to a terminal, so it sends a constant rather than a
+measurement. Requests classify as agent traffic on the strength of the marker,
+not this value.
+
+Both values are fixed in the plugin's MCP configuration. Nothing user-,
+machine-, or repo-specific is sent, and the attribution is advisory analytics
+only — it is never used for access control, gating, or rate-limiting.
 
 ## Example Prompts
 
