@@ -2,6 +2,10 @@
   "mcpServers": {
     "sprites": {
       "url": "https://sprites.dev/mcp",
+      "http_headers": {
+        "Fly-Client-Interactive": "false",
+        "Fly-Client-Agent": "codex"
+      },
       "tool_timeout_sec": 300
     }
   }
