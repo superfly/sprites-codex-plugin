@@ -24,6 +24,8 @@ Keep user-facing progress concise. Report the result, not MCP registration detai
 Use the smallest direct tool for the request:
 
 - List sprites: `list_sprites`.
+- Inspect a mentioned Sprite's identity: `get_sprite_info` with `sprite` and `sprite_id`.
+- Open a visual inspection panel: `open_sprite_inspector`, optionally with `sprite`.
 - Create a sprite: `create_sprite`, then `list_sprites` only if the user asked to see the updated list.
 - Delete a sprite: `destroy_sprite`, only after explicit delete/destroy/remove intent.
 - Run a one-off command in a sprite: `exec`. Inspect or stop exec sessions with `exec_list` and `exec_kill`.
@@ -34,6 +36,16 @@ Use the smallest direct tool for the request:
 - Inspect or change network policy: `policy_network_get`, `policy_network_update`.
 
 Sprite-scoped tools usually require a `sprite` argument. If the user did not name a sprite and the task needs one, call `list_sprites` and choose the obvious match; ask a short clarification only when there is no clear choice.
+
+## Composer Mentions and Inspector
+
+On supported desktop clients, users can select individual Sprites from the composer. A Sprite reference uses `sprites://org/<org_id>/<encoded-name>?id=<sprite_id>` and identifies an environment in a particular organization. The Inspector can also attach a selected Sprite's name, ID, and organization to the conversation.
+
+Use that explicit selection as the target. Verify it with `get_sprite_info`, passing the decoded name as `sprite` and the reference's ID as `sprite_id`, and check that the returned organization matches the reference. Pass `sprite_id` alongside `sprite` to subsequent sprite-scoped tools that advertise it. If access fails or the identity has changed, report that the reference is stale or unavailable; do not substitute a similarly named environment. When multiple selections leave the target ambiguous, ask which one the user means. A selection supplies context, not permission to delete or restore an environment.
+
+When the user asks for a visual overview, open `open_sprite_inspector`. It lists environments and provides explicit reads for services, checkpoints, and the last 100 service-log lines. Runtime reads may wake the selected Sprite. The Inspector has no mutation controls; use the existing tools for requested changes. Its current selection is contextual and may be removed from the composer.
+
+These extensions require support from both the host and the hosted MCP server. If only the extension tools or UI are unavailable, continue using the existing list and inspection tools and summarize their results in chat. Do not attempt to register a second server. Composer search is host-driven; `search_sprite_mentions` is an app-only tool.
 
 ## Common Flows
 
