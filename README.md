@@ -11,6 +11,7 @@ With this plugin enabled, you can ask Codex to:
 - List your active sprites.
 - Create a fresh remote environment for a task.
 - Inspect a sprite's files, services, logs, checkpoints, and network policy.
+- Select a specific Sprite in the desktop composer and inspect it beside the conversation.
 - Run commands, tests, builds, and diagnostics inside a selected sprite.
 - Start long-running services such as dev servers, background workers, and databases.
 - Create checkpoints before risky changes.
@@ -73,6 +74,27 @@ only — it is never used for access control, gating, or rate-limiting.
 - "Use Sprites to inspect services and logs for a selected sprite."
 - "Create a checkpoint in my `api-debug` sprite, then run the failing test."
 - "Start the web service in my sprite and give me the URL."
+- "Open the Sprite Inspector for `api-debug`."
+
+## Composer Mentions and Sprite Inspector
+
+With the matching MCP server update deployed, supported desktop clients can search
+for individual Sprites in the composer. Search uses a name prefix and shows up to
+20 environments accessible to the authenticated organization and token. Selecting
+a result adds a reference containing the Sprite's organization, name, and ID.
+Codex verifies that identity before using the environment.
+
+The **Sprite Inspector** opens beside the conversation. Ask Codex to open it, or
+use its conversation-panel entrypoint where the host supports one. You can browse
+and filter environments, load more results, attach a selected Sprite to chat,
+inspect services and checkpoints, and read the last 100 lines of a service's logs.
+Opening the panel lists metadata; loading runtime details or logs may wake a
+sleeping Sprite. The panel is read-only and refreshes on request.
+
+The hosted MCP server supplies the UI and extension metadata. No extra local
+server or credentials are needed. Existing text-based tools remain available on
+clients without extension support. After the server update is deployed, refresh
+the plugin connection or restart Codex to discover the new tools.
 
 ## How Codex Uses Sprites
 
