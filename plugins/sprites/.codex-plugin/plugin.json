@@ -1,6 +1,6 @@
 {
   "name": "sprites",
-  "version": "0.2.0",
+  "version": "1.0.1",
   "description": "Use Sprites from Codex to create, inspect, and operate remote isolated development environments.",
   "author": {
     "name": "Fly.io",
@@ -18,7 +18,7 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Sprites",
-    "shortDescription": "Manage remote development sprites from Codex.",
+    "shortDescription": "Give Codex its own computer",
     "longDescription": "Create, list, inspect, and operate remote Sprites environments from Codex. Select individual Sprites in supported desktop composers and open a read-only Sprite Inspector for services, checkpoints, and recent logs.",
     "developerName": "Fly.io",
     "category": "Developer Tools",
@@ -34,8 +34,9 @@
       "Use Sprites to create a new remote environment for this repo and run the tests.",
       "Use Sprites to inspect services and logs for a selected sprite."
     ],
-    "brandColor": "#8AE234",
-    "composerIcon": "./assets/sprites-logo.svg",
-    "logo": "./assets/sprites-logo.svg"
+    "brandColor": "#16A34A",
+    "composerIcon": "./assets/fly-logo.png",
+    "logo": "./assets/fly-logo.png",
+    "supportURL": "https://docs.fly.io/about/support"
   }
 }

@@ -127,3 +127,9 @@ If authentication fails during plugin install or first use, retry the plugin aut
 If a command inside a sprite cannot reach the network, ask Codex to inspect the sprite network policy before changing it.
 
 If a web service is not reachable, ask Codex to inspect the sprite's services, logs, and configured HTTP port.
+
+## Packaging a Directory Update
+
+Run `python3 scripts/package_plugin.py` to build and validate the upload ZIP.
+See [directory release packaging](release/README.md) for the published-version
+baseline, upload-specific settings, and remaining portal checks.
