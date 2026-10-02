@@ -22,6 +22,7 @@ SKIPPED_DIRECTORIES = {
     ".ruff_cache",
     ".venv",
     "__pycache__",
+    "dist",
 }
 TEXT_SUFFIXES = {
     ".json",
