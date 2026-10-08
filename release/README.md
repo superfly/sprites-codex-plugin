@@ -1,9 +1,11 @@
 # Directory release packaging
 
-The last confirmed published directory version is **1.0.0**. The **1.0.1**
-package is prepared and pending publication; preparing or uploading it does not
-mean it has been approved or published. A previous upload labeled 0.2.0 entered
-review before the published version was checked.
+The recorded last confirmed published directory version is **1.0.0**. The source
+version is **1.0.2**, an icon and listing metadata patch over 1.0.1. OpenAI directory submission
+and publication are deferred until a future functional change; this patch should
+not be submitted for review on its own. Preparing a package does not mean it has
+been approved or published. A previous upload labeled 0.2.0 entered review before
+the published version was checked.
 
 Build the directory ZIP from the repository root with Python 3.12 or newer:
 
@@ -11,7 +13,7 @@ Build the directory ZIP from the repository root with Python 3.12 or newer:
 python3 scripts/package_plugin.py
 ```
 
-The output is `dist/sprites-1.0.1.zip` for the current version. ZIP files and
+The output is `dist/sprites-1.0.2.zip` for the current version. ZIP files and
 staging copies stay in ignored `dist/`; commit the source and release settings.
 No additional Python packages or network access are needed to build the ZIP.
 
@@ -43,8 +45,7 @@ review materials, and publication settings. Review and publication are separate
 steps. Replacing an in-review submission requires cancelling review first; do
 not infer approval to cancel from a request to prepare a ZIP.
 
-The logo is Fly.io's official color brandmark from
-[Fly.io's brand assets](https://docs.fly.io/about/brand). The committed 512 x 512
-PNG was rendered from the official SVG with transparent square padding. It is
-used for both listing and composer icons. The green brand color `#16A34A` has
+The logo is the supplied Fly balloon artwork on a purple background. The
+committed 1024 x 1024 PNG is used unchanged for both listing and composer icons.
+The green brand color `#16A34A` has
 approximately 3.30:1 contrast against white, exceeding the directory's 2:1 minimum.

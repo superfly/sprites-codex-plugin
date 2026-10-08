@@ -1,5 +1,5 @@
 {
   "plugin_id": "app-6a8485b5beac8191954e37241acffe6d",
   "published_version": "1.0.0",
-  "release_notes": "Adds guidance for selecting individual Sprites in supported desktop composers and opening the Sprite Inspector to inspect services, checkpoints, and recent logs. Verifies selected Sprite identities before remote operations."
+  "release_notes": "Updates the listing and composer icons to the purple Fly balloon artwork and the website URL to https://fly.io/sprites. Includes guidance for selecting individual Sprites in supported desktop composers and opening the Sprite Inspector to inspect services, checkpoints, and recent logs. Verifies selected Sprite identities before remote operations."
 }
