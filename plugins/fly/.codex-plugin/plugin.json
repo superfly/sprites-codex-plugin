@@ -1,0 +1,44 @@
+{
+  "name": "fly",
+  "version": "1.0.0",
+  "description": "Operate authorized Fly.io apps, Machines, volumes, secrets, and Sprites through Fly MCP.",
+  "author": {
+    "name": "Fly.io",
+    "url": "https://fly.io"
+  },
+  "homepage": "https://mcp.fly.io",
+  "license": "MIT",
+  "keywords": [
+    "fly",
+    "fly.io",
+    "sprites",
+    "machines",
+    "mcp",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Fly",
+    "shortDescription": "Manage Fly apps and Sprites",
+    "longDescription": "Inspect and operate authorized Fly.io apps, Machines, volumes, and app secrets. Read IP assignments and TLS certificates. Create and work in Sprites with files, commands, services, checkpoints, network policies, and the Sprite Inspector. Access follows your Fly MCP consent. App creation, deployment workflows, and organization administration are not included.",
+    "developerName": "Fly.io",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://mcp.fly.io",
+    "privacyPolicyURL": "https://fly.io/legal/privacy-policy/",
+    "termsOfServiceURL": "https://fly.io/legal/terms-of-service/",
+    "defaultPrompt": [
+      "Use Fly to show my authorized apps and Sprites.",
+      "Use Fly to inspect Machines and volumes for my selected app.",
+      "Use Fly to create a Sprite for this task and run the tests."
+    ],
+    "brandColor": "#7C3AED",
+    "composerIcon": "./assets/fly-logo.png",
+    "logo": "./assets/fly-logo.png",
+    "supportURL": "https://docs.fly.io/about/support"
+  }
+}

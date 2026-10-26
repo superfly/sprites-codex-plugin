@@ -1,5 +1,35 @@
 # Directory release packaging
 
+## Separate Fly and Sprites releases
+
+This repository's Git marketplace exposes both plugins independently. Directory
+uploads also remain separate; never upload Fly as an update to the Sprites entry.
+
+```sh
+python3 scripts/package_plugin.py --plugin fly
+python3 scripts/package_plugin.py --plugin sprites
+```
+
+Fly starts at **1.0.0**, producing `dist/fly-1.0.0.zip`. Its settings live in
+[fly.json](fly.json), with `plugin_id` and `published_version` set to `null`
+until assigned or confirmed in the portal. Its initial package identity and
+archive folder are `fly`. Record Fly's own verified directory ID after creation;
+never reuse Sprites' ID. Set `published_version` only after confirming publication.
+Once set, subsequent package versions must exceed it.
+
+Fly's portable source manifests and Codex compatibility files must agree. The
+packager checks their identity, version, listing, and endpoint, includes the
+skill's Markdown references and icon, and preserves any review/publication
+metadata added to the portable source. It adds release notes from `fly.json`.
+Review cases, demo, and other publication details have not yet been prepared;
+the ZIP is a development package, not a claim of submission readiness.
+
+The build rejects shared directory IDs and validates each plugin against its
+own MCP endpoint. Both archives are deterministic. Building one does not change
+the other or rewrite Git installation identities. No portal actions are performed.
+
+## Existing Sprites release
+
 The recorded last confirmed published directory version is **1.0.0**. The source
 version is **1.0.2**, an icon and listing metadata patch over 1.0.1. OpenAI directory submission
 and publication are deferred until a future functional change; this patch should

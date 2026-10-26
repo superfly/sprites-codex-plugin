@@ -1,9 +1,21 @@
 {
   "name": "sprites",
   "interface": {
-    "displayName": "Sprites"
+    "displayName": "Fly.io"
   },
   "plugins": [
+    {
+      "name": "fly",
+      "source": {
+        "source": "local",
+        "path": "./plugins/fly"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
     {
       "name": "sprites",
       "source": {

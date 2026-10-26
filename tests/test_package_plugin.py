@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 import zipfile
@@ -113,3 +114,124 @@ class DirectoryPackageTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ValueError, "existing MCP endpoint"):
             validate_package(self.files, self.release)
+
+
+class FlyPackageTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "repo"
+        self.output = Path(self.temp.name) / "dist"
+        shutil.copytree(ROOT / "plugins", self.root / "plugins")
+        shutil.copytree(ROOT / "release", self.root / "release")
+        shutil.copyfile(ROOT / "LICENSE", self.root / "LICENSE")
+
+    def edit_json(self, path: str, **changes) -> None:
+        target = self.root / path
+        data = json.loads(target.read_text())
+        data.update(changes)
+        target.write_bytes(json_bytes(data))
+
+    def build(self) -> Path:
+        return build_package(self.root, self.output, plugin="fly")
+
+    def test_new_plugin_is_self_contained_and_does_not_change_sprites(self) -> None:
+        sprites_before = build_package(self.root, self.output).read_bytes()
+        archive = self.build()
+        self.assertEqual(archive.name, "fly-1.0.0.zip")
+        with zipfile.ZipFile(archive) as bundle:
+            self.assertTrue(all(name.startswith("fly/") for name in bundle.namelist()))
+            files = {name[4:]: bundle.read(name) for name in bundle.namelist()}
+        release = json.loads((self.root / "release/fly.json").read_text())
+        validate_package(files, release, "fly")
+        self.assertEqual(json.loads(files["plugin.json"])["name"], "fly")
+        for path in (
+            "skills/fly/SKILL.md",
+            "skills/fly/references/fly-resources.md",
+            "skills/fly/references/sprites.md",
+            "assets/fly-logo.png",
+        ):
+            self.assertEqual(files[path], (self.root / "plugins/fly" / path).read_bytes())
+        self.assertFalse(any(name.startswith("skills/sprites/") for name in files))
+        self.assertEqual(sprites_before, build_package(self.root, self.output).read_bytes())
+        first = archive.read_bytes()
+        self.assertEqual(first, self.build().read_bytes())
+        self.assertEqual(
+            json.loads((self.root / "plugins/fly/plugin.json").read_text())["name"], "fly"
+        )
+
+    def test_assigned_identity_and_published_version_only_affect_upload(self) -> None:
+        identity = "app-" + "1" * 32
+        self.edit_json("release/fly.json", plugin_id=identity, published_version="0.0.1")
+        with zipfile.ZipFile(self.build()) as bundle:
+            for path in ("plugin.json", ".codex-plugin/plugin.json"):
+                self.assertEqual(json.loads(bundle.read(f"{identity}/{path}"))["name"], identity)
+        self.assertEqual(
+            json.loads((self.root / "plugins/fly/plugin.json").read_text())["name"], "fly"
+        )
+        self.edit_json("release/fly.json", published_version="1.0.0")
+        with self.assertRaisesRegex(ValueError, "exceed published_version"):
+            self.build()
+
+    def test_rejects_reusing_sprites_directory_identity(self) -> None:
+        sprites = json.loads((self.root / "release/directory.json").read_text())
+        self.edit_json("release/fly.json", plugin_id=sprites["plugin_id"])
+        with self.assertRaisesRegex(ValueError, "separate directory identities"):
+            self.build()
+
+    def test_rejects_published_version_without_identity(self) -> None:
+        self.edit_json("release/fly.json", published_version="0.0.1")
+        with self.assertRaisesRegex(ValueError, "require a directory ID"):
+            self.build()
+
+    def test_rejects_source_manifest_drift(self) -> None:
+        self.edit_json("plugins/fly/plugin.json", version="0.2.0")
+        with self.assertRaisesRegex(ValueError, "compatibility manifest differ"):
+            self.build()
+
+    def test_rejects_source_mcp_drift(self) -> None:
+        self.edit_json(
+            "plugins/fly/mcp.json",
+            mcpServers={
+                "fly": {
+                    "type": "streamable-http",
+                    "url": "https://sprites.dev/mcp",
+                }
+            },
+        )
+        with self.assertRaisesRegex(ValueError, "MCP configurations differ"):
+            self.build()
+
+    def test_rejects_wrong_endpoint_even_when_both_sources_agree(self) -> None:
+        self.edit_json(
+            "plugins/fly/mcp.json",
+            mcpServers={
+                "fly": {
+                    "type": "streamable-http",
+                    "url": "https://sprites.dev/mcp",
+                }
+            },
+        )
+        self.edit_json(
+            "plugins/fly/.mcp.json",
+            mcpServers={
+                "fly": {
+                    "url": "https://sprites.dev/mcp",
+                }
+            },
+        )
+        with self.assertRaisesRegex(ValueError, "existing MCP endpoint"):
+            self.build()
+
+    def test_preserves_source_review_and_publication_metadata(self) -> None:
+        path = self.root / "plugins/fly/plugin.json"
+        manifest = json.loads(path.read_text())
+        extension = manifest["extensions"]["com.openai"]
+        extension["review"] = {"prompts": ["Show the apps I can access."]}
+        extension["publication"] = {"countries": ["US"]}
+        path.write_bytes(json_bytes(manifest))
+        with zipfile.ZipFile(self.build()) as bundle:
+            saved = json.loads(bundle.read("fly/plugin.json"))["extensions"]["com.openai"]
+        self.assertEqual(saved["review"], extension["review"])
+        self.assertEqual(saved["publication"]["countries"], ["US"])
+        self.assertIn("release_notes", saved["publication"])
