@@ -73,3 +73,31 @@ previously existing secret was removed.
 `list_app_ips`, `list_app_certificates`, and `get_app_certificate` inspect
 existing assignments and certificates. They cannot allocate addresses or
 create, renew, or delete certificates. Explain that limitation when relevant.
+
+## Managed Postgres
+
+Resolve the organization, cluster, and (where applicable) database within the
+current grant. Managed Postgres uses `fly:mpg:read` and `fly:mpg:write`; access
+to an app or Sprites does not by itself authorize its organization's databases.
+Discover the live schemas before supplying arguments.
+
+| Task | Tools | Behavior that affects the choice |
+| --- | --- | --- |
+| Inspect clusters and plans | `list_postgres_clusters`, `get_postgres_cluster`, `get_postgres_plans` | Plans are listed cheapest first. Cluster endpoints become available once ready. |
+| Provision a cluster | `create_postgres_cluster` | Billable and asynchronous. Poll `get_postgres_cluster` until ready before creating databases or enabling extensions. |
+| Fork a cluster | `fork_postgres_cluster` | Requires a ready source; creates a new cluster without changing the source. Inherits source settings and its plan unless another plan is supplied. Wait for the fork to become ready. |
+| Inspect or create backups | `list_postgres_backups`, `create_postgres_backup` | Creation is asynchronous and rejected while a backup is already in progress. Check the backup listing before reporting completion or retrying. |
+| Inspect or create databases | `list_postgres_databases`, `create_postgres_database` | Select a ready cluster and verify the resulting database list after creation. |
+| Inspect or enable extensions | `list_postgres_extensions`, `enable_postgres_extension` | The listing distinguishes available and installed extensions. PostGIS extensions need a PostGIS-enabled cluster. |
+| Inspect users | `list_postgres_users` | Lists users; does not change users or passwords or return passwords. |
+| Diagnose query activity | `list_postgres_active_queries`, `list_postgres_slow_queries` | Returns full SQL text, which may contain private data. Summarize findings without exposing query literals. Times are in seconds. |
+
+Slow-query results are the top 20 queries by cumulative total execution time,
+excluding the `postgres` database. They use the latest available metrics within
+the lookback range; the counters are cumulative, not changes during that range.
+
+Creation and forks must serve the user's requested operation; an inspection
+request does not authorize provisioning. If a mutation's response is lost,
+inspect the cluster, backup, database, or extension state before retrying.
+These tools do not delete Postgres resources, change users or passwords, return
+passwords, or provide an arbitrary SQL execution tool.

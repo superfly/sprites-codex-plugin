@@ -27,6 +27,27 @@ the ZIP is a development package, not a claim of submission readiness.
 The build rejects shared directory IDs and validates each plugin against its
 own MCP endpoint. Both archives are deterministic. Building one does not change
 the other or rewrite Git installation identities. No portal actions are performed.
+Both local `.mcp.json` files include Codex client attribution headers; the
+packager removes those headers from both directory archives.
+
+## Connection validation before submission
+
+CI builds both archives and runs `python3 scripts/check_auth_metadata.py` in a
+separate job. The probe uses only unauthenticated GETs: it checks each MCP
+endpoint's 401/Bearer challenge, resource and issuer identity, PKCE S256, a DCR
+registration endpoint, and public-client support. It sends an SSE Accept header
+so Fly's public HTML landing page is not mistaken for an authenticated MCP
+response. It never registers a client, logs in, or revokes a grant. Failures in
+this job can reflect a live endpoint outage as well as an auth metadata change.
+
+Before directory submission, a human must complete browser OAuth for **both**
+plugins in the target host and run a read-only resource listing through each.
+Using separate test grants, revoke Fly's grant and confirm Fly loses access
+while Sprites still works; reauthorize Fly, then revoke Sprites' grant and
+confirm Sprites loses access while Fly still works. Check that the host cannot
+refresh the revoked grant. Record the host version and results without tokens,
+authorization codes, or private output. This end-to-end and revocation-isolation
+check remains pending; the credential-free probe does not establish it.
 
 ## Existing Sprites release
 

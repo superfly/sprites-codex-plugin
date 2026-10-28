@@ -20,14 +20,19 @@ calls are permitted. Installing the plugin does not grant access to all of Fly.
 - Inspect existing apps; operate Machines, leases, memory, and metadata.
 - Manage volumes and snapshots, and set or remove app secrets.
 - Inspect IP assignments and TLS certificates.
+- Inspect Managed Postgres clusters, plans, backups, databases, extensions,
+  users, and query activity; create or fork clusters, create backups and
+  databases, and enable extensions.
 - Create and operate Sprites: files, commands, services, checkpoints, and
   network policies, plus composer mentions and the read-only Sprite Inspector
   in supported hosts.
 
-App creation, deployment workflows, product provisioning, and organization
+App creation, deployment workflows, other product provisioning, and organization
 administration are outside the current MCP tool set. Network addresses and
-certificates are read-only. Machine and volume creation can incur charges;
-deleting resources and restoring Sprite checkpoints can discard data.
+certificates are read-only. Postgres tools cannot delete resources, change users
+or passwords, or return passwords. Machine, volume, and Postgres cluster creation
+can incur charges; deleting resources and restoring Sprite checkpoints can
+discard data.
 
 The [Fly skill](skills/fly/SKILL.md) routes to focused Fly-resource and Sprite
 guidance. Tools and their argument schemas come from the server; the package
@@ -58,6 +63,9 @@ If the Inspector is unavailable in the host, direct inspection tools still work.
 When moving from Sprites, authorize Fly separately and disable the original
 plugin after verifying access. Keep operations on the selected connection;
 their grants can differ even for identically named resources.
+Never reuse a Sprites endpoint token against Fly MCP or a Fly MCP token against
+the Sprites endpoint. Keep API tokens out of chat and authorize each connection
+through the host's OAuth flow.
 
 See the [official Fly MCP guide](https://mcp.fly.io/guide.md) for the current
 server capabilities and the [release notes](../../release/README.md) for packaging.

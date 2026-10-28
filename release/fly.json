@@ -1,5 +1,5 @@
 {
   "plugin_id": null,
   "published_version": null,
-  "release_notes": "Initial Fly plugin connecting to https://mcp.fly.io for authorized Fly apps, Machines, volumes, app secrets, network and certificate inspection, and Sprites. Includes guidance for resource scopes, identity checks, mutation recovery, and the Sprite Inspector."
+  "release_notes": "Initial Fly plugin connecting to https://mcp.fly.io for authorized Fly apps, Machines, volumes, app secrets, Managed Postgres, network and certificate inspection, and Sprites. Includes guidance for resource scopes, token isolation, identity checks, mutation recovery, and the Sprite Inspector."
 }

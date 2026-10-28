@@ -4,7 +4,7 @@ This repository is one marketplace containing two independently installable plug
 
 | Plugin | Scope | MCP endpoint | Source |
 | --- | --- | --- | --- |
-| **Fly** | Fly apps, Machines, volumes, app secrets, IP and certificate inspection, and Sprites | `https://mcp.fly.io` | [plugins/fly](plugins/fly/README.md) |
+| **Fly** | Fly apps, Machines, volumes, app secrets, Managed Postgres, IP and certificate inspection, and Sprites | `https://mcp.fly.io` | [plugins/fly](plugins/fly/README.md) |
 | **Sprites** | The original Sprites integration | `https://sprites.dev/mcp` | [plugins/sprites](plugins/sprites/README.md) |
 
 Choose **Fly** for new installations. The original Sprites package remains
@@ -77,3 +77,8 @@ python3 scripts/package_plugin.py --plugin sprites
 The archives are written separately to `dist/`. Omitting `--plugin` continues
 to build Sprites for compatibility with existing release commands. See
 [release packaging](release/README.md) for identity and publication details.
+
+CI also runs `python3 scripts/check_auth_metadata.py` against both live MCP
+endpoints without credentials. This checks OAuth discovery and advertised
+capabilities; human sign-in and revocation-isolation checks remain required
+before directory submission.

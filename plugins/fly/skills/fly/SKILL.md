@@ -1,6 +1,6 @@
 ---
 name: fly
-description: Operate Fly.io apps, Machines, volumes, app secrets, and Sprites through Fly MCP. Use for inspecting or managing Fly resources and working in Sprite environments.
+description: Operate Fly.io apps, Machines, volumes, app secrets, Managed Postgres, and Sprites through Fly MCP. Use for inspecting or managing Fly resources and working in Sprite environments.
 ---
 
 # Fly
@@ -25,15 +25,25 @@ entry does not grant permission to operate a resource. `list_organizations` and
 `get_launch_requirements` explains blockers and returns browser handoffs; it
 does not accept terms or change billing settings.
 
-Resolve the organization and app, Machine, volume, or Sprite before acting.
+Resolve the organization and app, Machine, volume, Postgres cluster/database, or
+Sprite before acting.
 Use IDs returned by discovery or explicit selections. Ask only when the target
 is ambiguous. Do not fall back to another connection, organization, or similarly
 named resource after an authorization failure. If both Fly and Sprites plugins
 are enabled, keep this workflow on the Fly connection; their grants can differ.
 
+### Authentication isolation
+
+Never reuse a Sprites token issued for `https://sprites.dev/mcp` against
+`https://mcp.fly.io`, or a Fly MCP token against the Sprites endpoint. Authorize
+each connection separately through the host's OAuth flow. Never ask for or paste
+API tokens into chat, or copy tokens between connections to bypass a failure.
+Check the selected connection's status: a connected app and a local MCP server
+with the same display name can have separate authorization.
+
 ## Choose a workflow
 
-- For Fly apps, Machines, volumes, secrets, IPs, or certificates, read
+- For Fly apps, Machines, volumes, secrets, IPs, certificates, or Managed Postgres, read
   [Fly resources](references/fly-resources.md).
 - For Sprite files, commands, services, checkpoints, network policies, composer
   mentions, or Inspector, read [Sprites](references/sprites.md).
@@ -51,12 +61,15 @@ the host's consent flow, not repeated calls or credentials copied into chat.
 
 ## Capability boundary
 
-The server currently supports direct operations on existing Fly apps and their
-resources, plus Sprite lifecycle and runtime operations. IPs and TLS certificates
-are read-only. It does not provide app creation, deployment workflows, product
-provisioning, or organization administration. Creating a Machine from supplied
+The server supports direct operations on existing Fly apps and their resources,
+Managed Postgres inspection and provisioning, and Sprite lifecycle and runtime
+operations. Postgres tools can create and fork clusters, create backups and
+databases, and enable extensions; they cannot delete Postgres resources, change
+users or passwords, or return passwords. IPs and TLS certificates are read-only.
+App creation, deployment workflows, other product provisioning, and organization
+administration are not included. Creating a Machine from supplied
 configuration is not a complete build-and-deploy workflow. Explain unsupported
 steps instead of inventing tools or silently switching to another integration.
 
 The live tool schemas and authorization are authoritative. The references were
-checked against the [Fly MCP guide](https://mcp.fly.io/guide.md) on 2026-10-26.
+checked against the [Fly MCP guide](https://mcp.fly.io/guide.md) on 2026-10-28.

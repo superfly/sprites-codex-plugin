@@ -47,3 +47,27 @@ jobs:
 
       - name: Run tests
         run: python -m unittest discover --start-directory tests --verbose
+
+      - name: Build both directory packages
+        run: |
+          python scripts/package_plugin.py --plugin fly
+          python scripts/package_plugin.py --plugin sprites
+
+  auth-metadata:
+    name: Public OAuth metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Probe both MCP endpoints without credentials
+        run: python scripts/check_auth_metadata.py

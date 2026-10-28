@@ -144,6 +144,15 @@ class FlyPackageTests(unittest.TestCase):
             files = {name[4:]: bundle.read(name) for name in bundle.namelist()}
         release = json.loads((self.root / "release/fly.json").read_text())
         validate_package(files, release, "fly")
+        source_config = self.root / "plugins/fly/.mcp.json"
+        source_headers = json.loads(source_config.read_text())["mcpServers"]["fly"]["http_headers"]
+        self.assertEqual(
+            source_headers, {"Fly-Client-Agent": "codex", "Fly-Client-Interactive": "false"}
+        )
+        for path in (".mcp.json", "mcp.json"):
+            server = json.loads(files[path])["mcpServers"]["fly"]
+            self.assertNotIn("http_headers", server)
+            self.assertNotIn("headers", server)
         self.assertEqual(json.loads(files["plugin.json"])["name"], "fly")
         for path in (
             "skills/fly/SKILL.md",

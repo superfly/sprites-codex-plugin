@@ -1,7 +1,7 @@
 {
   "name": "fly",
   "version": "1.0.0",
-  "description": "Operate authorized Fly.io apps, Machines, volumes, secrets, and Sprites through Fly MCP.",
+  "description": "Operate authorized Fly.io apps, Machines, volumes, secrets, Managed Postgres, and Sprites through Fly MCP.",
   "author": {
     "name": "Fly.io",
     "url": "https://fly.io"
@@ -22,7 +22,7 @@
       "interface": {
         "displayName": "Fly",
         "shortDescription": "Manage Fly apps and Sprites",
-        "longDescription": "Inspect and operate authorized Fly.io apps, Machines, volumes, and app secrets. Read IP assignments and TLS certificates. Create and work in Sprites with files, commands, services, checkpoints, network policies, and the Sprite Inspector. Access follows your Fly MCP consent. App creation, deployment workflows, and organization administration are not included.",
+        "longDescription": "Inspect and operate authorized Fly.io apps, Machines, volumes, and app secrets. Read IP assignments and TLS certificates. Inspect Managed Postgres clusters, plans, backups, databases, extensions, users, and query activity; create or fork clusters, create backups and databases, and enable extensions. Postgres deletion and user/password changes are not supported. Create and work in Sprites with files, commands, services, checkpoints, network policies, and the Sprite Inspector. Access follows your Fly MCP consent. App creation, deployment workflows, and organization administration are not included.",
         "developerName": "Fly.io",
         "category": "Developer Tools",
         "capabilities": [
