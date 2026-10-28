@@ -19,6 +19,15 @@ OAuth is handled by Codex when the Sprites MCP tools are invoked. If Codex promp
 
 Keep user-facing progress concise. Report the result, not MCP registration details, local config checks, or CLI noise.
 
+### Authentication isolation
+
+Never use a Fly MCP token issued for `https://mcp.fly.io` against
+`https://sprites.dev/mcp`, or reuse a Sprites endpoint token against Fly MCP.
+Authorize each connection separately through the host's OAuth flow. Never ask
+for or paste API tokens into chat, or copy tokens between connections to bypass
+an authorization failure. Keep this workflow on the selected Sprites connection;
+the Fly plugin's grant can differ even for identically named resources.
+
 ## Tool Map
 
 Use the smallest direct tool for the request:

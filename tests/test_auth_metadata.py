@@ -28,7 +28,7 @@ class AuthMetadataTests(unittest.TestCase):
                         "registration_endpoint": issuer + "/register",
                         "code_challenge_methods_supported": ["S256"],
                         "token_endpoint_auth_methods_supported": ["none"],
-                        "grant_types_supported": ["authorization_code"],
+                        "grant_types_supported": ["authorization_code", "refresh_token"],
                         "response_types_supported": ["code"],
                     }
                 ).encode(),
@@ -86,3 +86,14 @@ class AuthMetadataTests(unittest.TestCase):
                 with patch("scripts.check_auth_metadata.get", side_effect=responses):
                     with self.assertRaises(ValueError):
                         probe("fly")
+
+    def test_rejects_authorization_code_without_refresh_tokens(self) -> None:
+        for name in ENDPOINTS:
+            with self.subTest(name=name):
+                responses = self.responses(name)
+                document = json.loads(responses[2][2])
+                document["grant_types_supported"] = ["authorization_code"]
+                responses[2] = (200, {}, json.dumps(document).encode())
+                with patch("scripts.check_auth_metadata.get", side_effect=responses):
+                    with self.assertRaisesRegex(ValueError, "must advertise refresh_token"):
+                        probe(name)

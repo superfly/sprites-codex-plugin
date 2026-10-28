@@ -14,13 +14,14 @@
     "sprites",
     "machines",
     "mcp",
-    "codex"
+    "codex",
+    "postgres"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Fly",
-    "shortDescription": "Manage Fly apps and Sprites",
+    "shortDescription": "Fly apps, Postgres & Sprites",
     "longDescription": "Inspect and operate authorized Fly.io apps, Machines, volumes, and app secrets. Read IP assignments and TLS certificates. Inspect Managed Postgres clusters, plans, backups, databases, extensions, users, and query activity; create or fork clusters, create backups and databases, and enable extensions. Postgres deletion and user/password changes are not supported. Create and work in Sprites with files, commands, services, checkpoints, network policies, and the Sprite Inspector. Access follows your Fly MCP consent. App creation, deployment workflows, and organization administration are not included.",
     "developerName": "Fly.io",
     "category": "Developer Tools",

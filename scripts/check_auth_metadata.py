@@ -75,6 +75,7 @@ def probe(name: str) -> None:
         ("code_challenge_methods_supported", "S256"),
         ("token_endpoint_auth_methods_supported", "none"),
         ("grant_types_supported", "authorization_code"),
+        ("grant_types_supported", "refresh_token"),
         ("response_types_supported", "code"),
     ):
         require(value in authorization.get(key, []), f"{key} must advertise {value}")
@@ -89,7 +90,10 @@ def main() -> int:
             print(f"{name}: {error}", file=sys.stderr)
             failures += 1
         else:
-            print(f"{name}: 401 challenge, resource/issuer, PKCE S256, DCR, public clients OK")
+            print(
+                f"{name}: 401 challenge, resource/issuer, PKCE S256, DCR, "
+                "public clients, refresh tokens OK"
+            )
     return int(failures > 0)
 
 

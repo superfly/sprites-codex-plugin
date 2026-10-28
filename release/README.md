@@ -35,7 +35,8 @@ packager removes those headers from both directory archives.
 CI builds both archives and runs `python3 scripts/check_auth_metadata.py` in a
 separate job. The probe uses only unauthenticated GETs: it checks each MCP
 endpoint's 401/Bearer challenge, resource and issuer identity, PKCE S256, a DCR
-registration endpoint, and public-client support. It sends an SSE Accept header
+registration endpoint, public-client support, and the refresh-token grant type.
+It sends an SSE Accept header
 so Fly's public HTML landing page is not mistaken for an authenticated MCP
 response. It never registers a client, logs in, or revokes a grant. Failures in
 this job can reflect a live endpoint outage as well as an auth metadata change.
