@@ -13,6 +13,10 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+PLUGINS = {
+    "sprites": ("release/directory.json", "https://sprites.dev/mcp"),
+    "fly": ("release/fly.json", "https://mcp.fly.io"),
+}
 
 
 def require(condition: bool, message: str) -> None:
@@ -47,16 +51,19 @@ def asset_path(value: str) -> str:
     return path.as_posix()
 
 
-def validate_package(files: dict[str, bytes], release: dict) -> None:
+def validate_package(files: dict[str, bytes], release: dict, plugin: str = "sprites") -> None:
     """Check the effective manifests and known portal rules in the actual archive content."""
     manifest = json.loads(files["plugin.json"])
     legacy = json.loads(files[".codex-plugin/plugin.json"])
+    identity = release["plugin_id"] or plugin
     for item in (manifest, legacy):
-        require(item["name"] == release["plugin_id"], "Plugin name must match directory ID")
-        require(
-            stable_version(item["version"]) > stable_version(release["published_version"]),
-            "Package version must exceed published_version",
-        )
+        require(item["name"] == identity, "Plugin name must match directory ID or new package name")
+        version = stable_version(item["version"])
+        if release["published_version"] is not None:
+            require(
+                version > stable_version(release["published_version"]),
+                "Package version must exceed published_version",
+            )
         require(not item.get("apps"), "Upload cannot declare app bindings")
         require(
             not item.get("extensions", {}).get("com.openai", {}).get("apps"),
@@ -96,33 +103,47 @@ def validate_package(files: dict[str, bytes], release: dict) -> None:
         require(len(data) <= 5 * 1024 * 1024, "Icon exceeds 5 MiB")
     portable = json.loads(files["mcp.json"])["mcpServers"]
     compatibility = json.loads(files[".mcp.json"])["mcpServers"]
-    require(set(portable) == set(compatibility) == {"sprites"}, "Unexpected MCP server inventory")
+    require(set(portable) == set(compatibility) == {plugin}, "Unexpected MCP server inventory")
     for servers in (portable, compatibility):
-        server = servers["sprites"]
+        server = servers[plugin]
         require("headers" not in server and "http_headers" not in server, "MCP headers unsupported")
-        require(server["url"] == "https://sprites.dev/mcp", "Keep the existing MCP endpoint")
+        require(
+            server["url"] == PLUGINS[plugin][1], "Keep the existing MCP endpoint for this plugin"
+        )
     require(
-        set(portable["sprites"]) == {"type", "url"}
-        and portable["sprites"]["type"] == "streamable-http",
+        set(portable[plugin]) == {"type", "url"} and portable[plugin]["type"] == "streamable-http",
         "Unsupported portable MCP settings",
     )
     require(".app.json" not in files, "Upload cannot include .app.json")
-    require("skills/sprites/SKILL.md" in files, "Missing Sprites skill")
+    require(f"skills/{plugin}/SKILL.md" in files, f"Missing {plugin} skill")
     require(legacy["skills"] == "./skills/", "Unexpected legacy skill path")
     require(legacy["mcpServers"] == "./.mcp.json", "Unexpected legacy MCP path")
 
 
-def build_package(root: Path, output: Path, published_version: str | None = None) -> Path:
-    source = root / "plugins/sprites"
-    release = json.loads((root / "release/directory.json").read_text())
+def build_package(
+    root: Path, output: Path, published_version: str | None = None, *, plugin: str = "sprites"
+) -> Path:
+    require(plugin in PLUGINS, "Unknown plugin")
+    source = root / "plugins" / plugin
+    release = json.loads((root / PLUGINS[plugin][0]).read_text())
     if published_version:
         release["published_version"] = published_version
-    require(
-        bool(re.fullmatch(r"app-[0-9a-f]{32}", release["plugin_id"])),
-        "Expected the verified directory plugin ID",
-    )
+    if release["plugin_id"] is None:
+        require(plugin == "fly", "Expected the verified directory plugin ID")
+        require(release["published_version"] is None, "Published releases require a directory ID")
+    else:
+        require(
+            bool(re.fullmatch(r"app-[0-9a-f]{32}", release["plugin_id"])),
+            "Expected the verified directory plugin ID",
+        )
+        other = "sprites" if plugin == "fly" else "fly"
+        other_release = json.loads((root / PLUGINS[other][0]).read_text())
+        require(
+            release["plugin_id"] != other_release["plugin_id"],
+            "Plugins must have separate directory identities",
+        )
     legacy = json.loads((source / ".codex-plugin/plugin.json").read_text())
-    legacy["name"] = release["plugin_id"]
+    require(legacy["name"] == plugin, "Source plugin name must match selected plugin")
     manifest = {
         k: copy.deepcopy(v)
         for k, v in legacy.items()
@@ -135,9 +156,24 @@ def build_package(root: Path, output: Path, published_version: str | None = None
             "publication": {"release_notes": release["release_notes"]},
         }
     }
+    if (source / "plugin.json").exists():
+        portable_source = json.loads((source / "plugin.json").read_text())
+        expected = copy.deepcopy(manifest)
+        expected["extensions"]["com.openai"].pop("publication")
+        # Source is authoritative for review/publication metadata as it is added.
+        comparison = copy.deepcopy(portable_source)
+        for field in ("review", "publication"):
+            comparison.get("extensions", {}).get("com.openai", {}).pop(field, None)
+        require(comparison == expected, "Portable source and compatibility manifest differ")
+        manifest = portable_source
+        manifest["extensions"]["com.openai"].setdefault("publication", {}).update(
+            release_notes=release["release_notes"]
+        )
+    identity = release["plugin_id"] or plugin
+    manifest["name"] = legacy["name"] = identity
     config = json.loads((source / ".mcp.json").read_text())
-    require(set(config["mcpServers"]) == {"sprites"}, "Unexpected source MCP server inventory")
-    server = config["mcpServers"]["sprites"]
+    require(set(config["mcpServers"]) == {plugin}, "Unexpected source MCP server inventory")
+    server = config["mcpServers"][plugin]
     require(
         set(server) <= {"url", "http_headers", "headers", "tool_timeout_sec"},
         "Unsupported source MCP setting; review before packaging",
@@ -146,8 +182,13 @@ def build_package(root: Path, output: Path, published_version: str | None = None
     server.pop("headers", None)
     portable = {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
-        "mcpServers": {"sprites": {"type": "streamable-http", "url": server["url"]}},
+        "mcpServers": {plugin: {"type": "streamable-http", "url": server["url"]}},
     }
+    if (source / "mcp.json").exists():
+        require(
+            json.loads((source / "mcp.json").read_text()) == portable,
+            "Portable source and compatibility MCP configurations differ",
+        )
     files = {
         "plugin.json": json_bytes(manifest),
         ".codex-plugin/plugin.json": json_bytes(legacy),
@@ -162,32 +203,33 @@ def build_package(root: Path, output: Path, published_version: str | None = None
         require(path.resolve().is_relative_to(source.resolve()), "File escapes plugin directory")
         require(not path.is_symlink(), "Package cannot contain symlinks")
         files[relative] = path.read_bytes()
-    validate_package(files, release)
+    validate_package(files, release, plugin)
     output.mkdir(parents=True, exist_ok=True)
-    archive = output / f"sprites-{manifest['version']}.zip"
+    archive = output / f"{plugin}-{manifest['version']}.zip"
     # Fixed metadata and sorted paths make repeated builds byte-for-byte reproducible.
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
         for name, data in sorted(files.items()):
-            info = zipfile.ZipInfo(f"{release['plugin_id']}/{name}", (2020, 1, 1, 0, 0, 0))
+            info = zipfile.ZipInfo(f"{identity}/{name}", (2020, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o100644 << 16
             bundle.writestr(info, data)
     with zipfile.ZipFile(archive) as bundle:
         require(bundle.testzip() is None, "ZIP integrity check failed")
-        prefix = release["plugin_id"] + "/"
+        prefix = identity + "/"
         actual = {name.removeprefix(prefix): bundle.read(name) for name in bundle.namelist()}
         require(actual == files, "ZIP content differs from prepared package")
-        validate_package(actual, release)
+        validate_package(actual, release, plugin)
     return archive
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "dist")
+    parser.add_argument("--plugin", choices=PLUGINS, default="sprites")
     parser.add_argument("--published-version", help="Override the last confirmed published version")
     args = parser.parse_args()
     try:
-        archive = build_package(ROOT, args.output_dir, args.published_version)
+        archive = build_package(ROOT, args.output_dir, args.published_version, plugin=args.plugin)
     except (ValueError, KeyError, OSError) as exc:
         parser.exit(1, f"Packaging failed: {exc}\n")
     print(f"Built and locally validated {archive}")

@@ -1,12 +1,12 @@
 {
   "name": "sprites",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Use Sprites from Codex to create, inspect, and operate remote isolated development environments.",
   "author": {
     "name": "Fly.io",
     "url": "https://fly.io"
   },
-  "homepage": "https://sprites.dev",
+  "homepage": "https://fly.io/sprites",
   "license": "MIT",
   "keywords": [
     "sprites",
@@ -26,7 +26,7 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://sprites.dev",
+    "websiteURL": "https://fly.io/sprites",
     "privacyPolicyURL": "https://fly.io/legal/privacy-policy/",
     "termsOfServiceURL": "https://fly.io/legal/terms-of-service/",
     "defaultPrompt": [
