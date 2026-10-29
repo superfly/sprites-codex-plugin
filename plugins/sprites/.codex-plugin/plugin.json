@@ -6,7 +6,7 @@
     "name": "Fly.io",
     "url": "https://fly.io"
   },
-  "homepage": "https://fly.io/sprites",
+  "homepage": "https://sprites.dev",
   "license": "MIT",
   "keywords": [
     "sprites",
@@ -26,7 +26,7 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://fly.io/sprites",
+    "websiteURL": "https://sprites.dev",
     "privacyPolicyURL": "https://fly.io/legal/privacy-policy/",
     "termsOfServiceURL": "https://fly.io/legal/terms-of-service/",
     "defaultPrompt": [

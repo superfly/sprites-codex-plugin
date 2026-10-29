@@ -13,6 +13,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+PORTABLE_MCP_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
 PLUGINS = {
     "sprites": ("release/directory.json", "https://sprites.dev/mcp"),
     "fly": ("release/fly.json", "https://mcp.fly.io"),
@@ -42,6 +43,26 @@ def contrast_against_white(color: str) -> float:
 
 def json_bytes(data: dict) -> bytes:
     return (json.dumps(data, indent=2) + "\n").encode()
+
+
+def string_map(value: object, message: str) -> dict[str, str]:
+    require(isinstance(value, dict), message)
+    require(
+        all(isinstance(key, str) and isinstance(item, str) for key, item in value.items()),
+        message,
+    )
+    return value
+
+
+def runtime_header_map(server: dict) -> dict[str, str]:
+    """Return attribution headers from a Codex `.mcp.json` server entry."""
+    message = "MCP headers must be an object of strings"
+    headers = string_map(server.get("http_headers", {}), message)
+    if "headers" not in server:
+        return headers
+    portable_headers = string_map(server["headers"], message)
+    require(not headers or portable_headers == headers, "MCP header fields disagree")
+    return portable_headers
 
 
 def asset_path(value: str) -> str:
@@ -174,26 +195,57 @@ def build_package(
     config = json.loads((source / ".mcp.json").read_text())
     require(set(config["mcpServers"]) == {plugin}, "Unexpected source MCP server inventory")
     server = config["mcpServers"][plugin]
+    # Legacy Codex `.mcp.json` accepts `type` and then removes it. `tool_timeout_sec`
+    # and `http_headers` are real Codex fields. Portable `mcp.json` cannot carry them:
+    # the Agent Plugins schema and Codex's parser only allow `type`, `url`, and `headers`.
     require(
-        set(server) <= {"url", "http_headers", "headers", "tool_timeout_sec"},
+        set(server) <= {"url", "http_headers", "headers", "tool_timeout_sec", "type"},
         "Unsupported source MCP setting; review before packaging",
     )
-    server.pop("http_headers", None)
-    server.pop("headers", None)
+    if "type" in server:
+        require(server["type"] == "streamable-http", "Unsupported source MCP transport")
+    runtime_headers = runtime_header_map(server)
+    packaged_runtime = copy.deepcopy(config)
+    packaged_server = packaged_runtime["mcpServers"][plugin]
+    # Directory archives keep the previously accepted compatibility shape.
+    for field in ("type", "http_headers", "headers"):
+        packaged_server.pop(field, None)
     portable = {
-        "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+        "$schema": PORTABLE_MCP_SCHEMA,
         "mcpServers": {plugin: {"type": "streamable-http", "url": server["url"]}},
     }
     if (source / "mcp.json").exists():
+        source_portable = json.loads((source / "mcp.json").read_text())
         require(
-            json.loads((source / "mcp.json").read_text()) == portable,
+            set(source_portable) <= {"$schema", "mcpServers"}
+            and source_portable.get("$schema") == PORTABLE_MCP_SCHEMA,
+            "Unsupported portable MCP settings",
+        )
+        require(
+            set(source_portable["mcpServers"]) == {plugin},
+            "Unexpected source MCP server inventory",
+        )
+        declared = source_portable["mcpServers"][plugin]
+        # `http_headers` and `tool_timeout_sec` are invalid on this file. Codex
+        # rejects the server, and the published schema sets additionalProperties false.
+        require(set(declared) <= {"type", "url", "headers"}, "Unsupported portable MCP settings")
+        require(declared.get("type") == "streamable-http", "Unsupported portable MCP settings")
+        require(
+            declared.get("url") == server["url"],
+            "Portable source and compatibility MCP configurations differ",
+        )
+        declared_headers = string_map(
+            declared.get("headers", {}), "MCP headers must be an object of strings"
+        )
+        require(
+            declared_headers == runtime_headers,
             "Portable source and compatibility MCP configurations differ",
         )
     files = {
         "plugin.json": json_bytes(manifest),
         ".codex-plugin/plugin.json": json_bytes(legacy),
         "mcp.json": json_bytes(portable),
-        ".mcp.json": json_bytes(config),
+        ".mcp.json": json_bytes(packaged_runtime),
         "LICENSE": (root / "LICENSE").read_bytes(),
     }
     paths = {asset_path(legacy["interface"][field]) for field in ("logo", "composerIcon")}

@@ -30,19 +30,25 @@ the Fly plugin's grant can differ even for identically named resources.
 
 ## Tool Map
 
-Use the smallest direct tool for the request:
+Sprites MCP (`https://sprites.dev/mcp`) exposes **24** tools (see `superfly/sprites-mcp` README). Use the smallest direct tool that is present in this session's schema:
+
+### Sprites MCP (24)
 
 - List sprites: `list_sprites`.
-- Inspect a mentioned Sprite's identity: `get_sprite_info` with `sprite` and `sprite_id`.
-- Open a visual inspection panel: `open_sprite_inspector`, optionally with `sprite`.
 - Create a sprite: `create_sprite`, then `list_sprites` only if the user asked to see the updated list.
 - Delete a sprite: `destroy_sprite`, only after explicit delete/destroy/remove intent.
 - Run a one-off command in a sprite: `exec`. Inspect or stop exec sessions with `exec_list` and `exec_kill`.
+- Files: `file_list`, `file_read`, `file_write`, `file_copy`, `file_rename`, `file_delete` (`workingDir` + path flags per live schema). Prefer file tools over shell quoting tricks; fall back to `exec` only when no file tool fits.
 - Inspect services: `service_list` and `service_get`.
 - Manage services: `service_create`, `service_start`, `service_stop`.
 - Inspect service logs: `service_logs`.
 - Manage checkpoints: `checkpoint_create`, `checkpoint_list`, `checkpoint_get`, `checkpoint_restore`.
 - Inspect or change network policy: `policy_network_get`, `policy_network_update`.
+
+### Fly MCP / host extensions (only if present)
+
+- Inspect a mentioned Sprite's identity: `get_sprite_info` with `sprite` and `sprite_id` — only if present in this session's schema / Fly MCP connection.
+- Open a visual inspection panel: `open_sprite_inspector`, optionally with `sprite` — only if present.
 
 Sprite-scoped tools usually require a `sprite` argument. If the user did not name a sprite and the task needs one, call `list_sprites` and choose the obvious match; ask a short clarification only when there is no clear choice.
 
@@ -87,7 +93,7 @@ Keep these contexts distinct:
 
 Do not assume Codex's local shell is inside a sprite. To inspect or change a sprite, use Sprites MCP tools.
 
-If sprite-specific guidance files exist, read them remotely with `exec` only when relevant. Common examples include repository guidance files or project docs inside the sprite.
+If sprite-specific guidance files exist, read them remotely with `file_read` (or `exec` if no file tool is available) only when relevant. Common examples include repository guidance files or project docs inside the sprite.
 
 ## Safety
 

@@ -1,6 +1,7 @@
 {
   "mcpServers": {
     "sprites": {
+      "type": "streamable-http",
       "url": "https://sprites.dev/mcp",
       "http_headers": {
         "Fly-Client-Interactive": "false",

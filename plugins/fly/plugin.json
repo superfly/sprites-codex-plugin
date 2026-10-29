@@ -11,11 +11,12 @@
   "keywords": [
     "fly",
     "fly.io",
-    "sprites",
     "machines",
+    "volumes",
+    "postgres",
+    "sprites",
     "mcp",
-    "codex",
-    "postgres"
+    "codex"
   ],
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "extensions": {
