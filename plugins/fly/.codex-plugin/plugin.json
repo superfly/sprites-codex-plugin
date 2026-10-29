@@ -11,11 +11,12 @@
   "keywords": [
     "fly",
     "fly.io",
-    "sprites",
     "machines",
+    "volumes",
+    "postgres",
+    "sprites",
     "mcp",
-    "codex",
-    "postgres"
+    "codex"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",

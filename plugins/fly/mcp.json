@@ -3,7 +3,11 @@
   "mcpServers": {
     "fly": {
       "type": "streamable-http",
-      "url": "https://mcp.fly.io"
+      "url": "https://mcp.fly.io",
+      "headers": {
+        "Fly-Client-Interactive": "false",
+        "Fly-Client-Agent": "codex"
+      }
     }
   }
 }

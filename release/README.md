@@ -18,17 +18,22 @@ never reuse Sprites' ID. Set `published_version` only after confirming publicati
 Once set, subsequent package versions must exceed it.
 
 Fly's portable source manifests and Codex compatibility files must agree. The
-packager checks their identity, version, listing, and endpoint, includes the
-skill's Markdown references and icon, and preserves any review/publication
-metadata added to the portable source. It adds release notes from `fly.json`.
+packager checks their identity, version, listing, endpoint, and client
+attribution headers. Portable `mcp.json` stores those headers in the Agent
+Plugins `headers` field. Codex `.mcp.json` stores the same values in
+`http_headers`, plus `type` and `tool_timeout_sec`, which the portable schema
+does not allow. It includes the skill's Markdown references and icon, and
+preserves any review/publication metadata added to the portable source. It
+adds release notes from `fly.json`.
 Review cases, demo, and other publication details have not yet been prepared;
 the ZIP is a development package, not a claim of submission readiness.
 
 The build rejects shared directory IDs and validates each plugin against its
 own MCP endpoint. Both archives are deterministic. Building one does not change
 the other or rewrite Git installation identities. No portal actions are performed.
-Both local `.mcp.json` files include Codex client attribution headers; the
-packager removes those headers from both directory archives.
+Both local MCP configs include the same Codex client attribution headers. The
+packager removes those headers, and the legacy `type` field, from both
+directory archives.
 
 ## Connection validation before submission
 

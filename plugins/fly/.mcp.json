@@ -1,6 +1,7 @@
 {
   "mcpServers": {
     "fly": {
+      "type": "streamable-http",
       "url": "https://mcp.fly.io",
       "http_headers": {
         "Fly-Client-Interactive": "false",
