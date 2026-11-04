@@ -1,23 +1,23 @@
 # Directory release packaging
 
-## Separate Fly and Sprites releases
+## Separate Fly.io and Sprites releases
 
 This repository's Git marketplace exposes both plugins independently. Directory
-uploads also remain separate; never upload Fly as an update to the Sprites entry.
+uploads also remain separate; never upload Fly.io as an update to the Sprites entry.
 
 ```sh
 python3 scripts/package_plugin.py --plugin fly
 python3 scripts/package_plugin.py --plugin sprites
 ```
 
-Fly starts at **1.0.0**, producing `dist/fly-1.0.0.zip`. Its settings live in
+Fly.io starts at **1.0.0**, producing `dist/fly-1.0.0.zip`. Its settings live in
 [fly.json](fly.json), with `plugin_id` and `published_version` set to `null`
 until assigned or confirmed in the portal. Its initial package identity and
-archive folder are `fly`. Record Fly's own verified directory ID after creation;
+archive folder are `fly`. Record Fly.io's own verified directory ID after creation;
 never reuse Sprites' ID. Set `published_version` only after confirming publication.
 Once set, subsequent package versions must exceed it.
 
-Fly's portable source manifests and Codex compatibility files must agree. The
+Fly.io's portable source manifests and Codex compatibility files must agree. The
 packager checks their identity, version, listing, endpoint, and client
 attribution headers. Portable `mcp.json` stores those headers in the Agent
 Plugins `headers` field. Codex `.mcp.json` stores the same values in
@@ -42,15 +42,15 @@ separate job. The probe uses only unauthenticated GETs: it checks each MCP
 endpoint's 401/Bearer challenge, resource and issuer identity, PKCE S256, a DCR
 registration endpoint, public-client support, and the refresh-token grant type.
 It sends an SSE Accept header
-so Fly's public HTML landing page is not mistaken for an authenticated MCP
+so Fly.io's public HTML landing page is not mistaken for an authenticated MCP
 response. It never registers a client, logs in, or revokes a grant. Failures in
 this job can reflect a live endpoint outage as well as an auth metadata change.
 
 Before directory submission, a human must complete browser OAuth for **both**
 plugins in the target host and run a read-only resource listing through each.
-Using separate test grants, revoke Fly's grant and confirm Fly loses access
-while Sprites still works; reauthorize Fly, then revoke Sprites' grant and
-confirm Sprites loses access while Fly still works. Check that the host cannot
+Using separate test grants, revoke Fly.io's grant and confirm Fly.io loses access
+while Sprites still works; reauthorize Fly.io, then revoke Sprites' grant and
+confirm Sprites loses access while Fly.io still works. Check that the host cannot
 refresh the revoked grant. Record the host version and results without tokens,
 authorization codes, or private output. This end-to-end and revocation-isolation
 check remains pending; the credential-free probe does not establish it.
@@ -102,7 +102,7 @@ review materials, and publication settings. Review and publication are separate
 steps. Replacing an in-review submission requires cancelling review first; do
 not infer approval to cancel from a request to prepare a ZIP.
 
-The logo is the supplied Fly balloon artwork on a purple background. The
+The logo is the supplied Fly.io balloon artwork on a purple background. The
 committed 1024 x 1024 PNG is used unchanged for both listing and composer icons.
 The green brand color `#16A34A` has
 approximately 3.30:1 contrast against white, exceeding the directory's 2:1 minimum.

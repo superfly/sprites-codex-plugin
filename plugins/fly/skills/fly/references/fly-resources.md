@@ -1,6 +1,6 @@
-# Fly resources
+# Fly.io resources
 
-Resolve the app and organization within the current Fly grant. Read summaries
+Resolve the app and organization within the current Fly.io grant. Read summaries
 first; full configurations, process arguments, metadata, and historical versions
 can contain sensitive values and require additional scopes.
 
