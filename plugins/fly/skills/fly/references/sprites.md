@@ -1,6 +1,6 @@
-# Sprites through Fly
+# Sprites through Fly.io
 
-Use Sprite tools from the Fly connection. Its Sprites binding can restrict names
+Use Sprite tools from the Fly.io connection. Its Sprites binding can restrict names
 by prefix or label and limit creation. `list_sprites` returns only the visible
 subset, not necessarily all Sprites in an organization or only those this client
 created. Before `create_sprite`, call `get_fly_context` and inspect `name_prefix`

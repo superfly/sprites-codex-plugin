@@ -1,12 +1,12 @@
 ---
 name: fly
-description: Operate Fly.io apps, Machines, volumes, app secrets, Managed Postgres, and Sprites through Fly MCP. Use for inspecting or managing Fly resources and working in Sprite environments.
+description: Operate Fly.io apps, Machines, volumes, app secrets, Managed Postgres, and Sprites through Fly MCP. Use for inspecting or managing Fly.io resources and working in Sprite environments.
 ---
 
-# Fly
+# Fly.io
 
-Use the Fly plugin's MCP tools at `https://mcp.fly.io`. This connection covers
-both Fly resources and Sprites. Codex's local workspace, a Fly Machine, and a
+Use the Fly.io plugin's MCP tools at `https://mcp.fly.io`. This connection covers
+both Fly.io resources and Sprites. Codex's local workspace, a Fly Machine, and a
 Sprite filesystem are separate environments.
 
 ## Connection and scope
@@ -14,7 +14,7 @@ Sprite filesystem are separate environments.
 Use the installed plugin's direct tools. Discover the current tool schema before
 constructing arguments; the references describe tool selection, not fixed schemas.
 Do not register a second MCP server or start a separate CLI login during ordinary
-plugin use. If tools are absent, explain that the Fly connection is not loaded
+plugin use. If tools are absent, explain that the Fly.io connection is not loaded
 and ask the user to refresh the plugin or restart the host. Let the host handle
 OAuth; after the user completes authorization, retry the original call once.
 
@@ -29,8 +29,8 @@ Resolve the organization and app, Machine, volume, Postgres cluster/database, or
 Sprite before acting.
 Use IDs returned by discovery or explicit selections. Ask only when the target
 is ambiguous. Do not fall back to another connection, organization, or similarly
-named resource after an authorization failure. If both Fly and Sprites plugins
-are enabled, keep this workflow on the Fly connection; their grants can differ.
+named resource after an authorization failure. If both Fly.io and Sprites plugins
+are enabled, keep this workflow on the Fly.io connection; their grants can differ.
 
 ### Authentication isolation
 
@@ -43,8 +43,8 @@ with the same display name can have separate authorization.
 
 ## Choose a workflow
 
-- For Fly apps, Machines, volumes, secrets, IPs, certificates, or Managed Postgres, read
-  [Fly resources](references/fly-resources.md).
+- For Fly.io apps, Machines, volumes, secrets, IPs, certificates, or Managed Postgres, read
+  [Fly.io resources](references/fly-resources.md).
 - For Sprite files, commands, services, checkpoints, network policies, composer
   mentions, or Inspector, read [Sprites](references/sprites.md).
 
@@ -61,7 +61,7 @@ the host's consent flow, not repeated calls or credentials copied into chat.
 
 ## Capability boundary
 
-The server supports direct operations on existing Fly apps and their resources,
+The server supports direct operations on existing Fly.io apps and their resources,
 Managed Postgres inspection and provisioning, and Sprite lifecycle and runtime
 operations. Postgres tools can create and fork clusters, create backups and
 databases, and enable extensions; they cannot delete Postgres resources, change

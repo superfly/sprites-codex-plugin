@@ -21,7 +21,7 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "Fly",
+    "displayName": "Fly.io",
     "shortDescription": "Fly apps, Postgres & Sprites",
     "longDescription": "Inspect and operate authorized Fly.io apps, Machines, volumes, and app secrets. Read IP assignments and TLS certificates. Inspect Managed Postgres clusters, plans, backups, databases, extensions, users, and query activity; create or fork clusters, create backups and databases, and enable extensions. Postgres deletion and user/password changes are not supported. Create and work in Sprites with files, commands, services, checkpoints, network policies, and the Sprite Inspector. Access follows your Fly MCP consent. App creation, deployment workflows, and organization administration are not included.",
     "developerName": "Fly.io",
@@ -34,9 +34,9 @@
     "privacyPolicyURL": "https://fly.io/legal/privacy-policy/",
     "termsOfServiceURL": "https://fly.io/legal/terms-of-service/",
     "defaultPrompt": [
-      "Use Fly to show my authorized apps and Sprites.",
-      "Use Fly to inspect Machines and volumes for my selected app.",
-      "Use Fly to create a Sprite for this task and run the tests."
+      "Use Fly.io to show my authorized apps and Sprites.",
+      "Use Fly.io to inspect Machines and volumes for my selected app.",
+      "Use Fly.io to create a Sprite for this task and run the tests."
     ],
     "brandColor": "#7C3AED",
     "composerIcon": "./assets/fly-logo.png",
