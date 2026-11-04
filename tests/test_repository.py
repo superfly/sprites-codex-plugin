@@ -17,8 +17,8 @@ class CodexPluginRepositoryTests(unittest.TestCase):
         self.marketplace = load_json(ROOT / ".agents/plugins/marketplace.json")
         self.listings = self.marketplace["plugins"]
 
-    def test_marketplace_preserves_existing_identity_and_exposes_both_plugins(self) -> None:
-        self.assertEqual(self.marketplace["name"], "sprites")
+    def test_flyio_marketplace_exposes_both_plugins(self) -> None:
+        self.assertEqual(self.marketplace["name"], "flyio")
         self.assertEqual(self.marketplace["interface"]["displayName"], "Fly.io")
         names = [entry["name"] for entry in self.listings]
         self.assertEqual(len(names), len(set(names)))

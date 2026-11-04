@@ -19,29 +19,36 @@ Add the repository marketplace once:
 codex plugin marketplace add superfly/sprites-codex-plugin
 ```
 
-Restart Codex, open the plugin directory, select the **Fly.io** marketplace,
-and install **Fly.io** or **Sprites**. Adding the marketplace makes both available;
-it does not install or enable both. Complete the selected plugin's OAuth flow.
+Install **Fly.io**:
+
+```sh
+codex plugin add fly@flyio
+```
+
+Or install **Sprites** with `codex plugin add sprites@flyio`. Adding the
+marketplace makes both available; it does not install or enable both. Restart
+Codex and complete the selected plugin's OAuth flow.
 
 For a local checkout, run this from the repository root instead:
 
 ```sh
 codex plugin marketplace add .
+codex plugin add fly@flyio
 ```
 
 The catalog is [.agents/plugins/marketplace.json](.agents/plugins/marketplace.json).
 Each entry points to its own directory, manifest, skills, and connection.
-The marketplace's internal name remains `sprites` for compatibility, while its
-visible label is **Fly.io**. Plugin configuration keys remain `sprites@sprites`
-for the original plugin and `fly@sprites` for Fly.io. The repository URL and name
-do not need to change.
+The marketplace's internal name is `flyio`, and its visible label is **Fly.io**.
+Plugin configuration keys are `fly@flyio` for Fly.io and `sprites@flyio` for
+Sprites. Both Git and local installations use these identifiers. The repository
+URL and name remain unchanged.
 
 ## Existing Git installations
 
-Refresh the Git marketplace to discover Fly.io:
+Refresh an existing `flyio` Git marketplace:
 
 ```sh
-codex plugin marketplace upgrade sprites
+codex plugin marketplace upgrade flyio
 ```
 
 Then restart Codex and install Fly.io from the **Fly.io** marketplace. A checkout
@@ -50,8 +57,25 @@ upgrade` refreshes Git-backed snapshots. A pinned Git ref must contain the Fly.i
 package. Sparse checkouts must include `.agents/plugins`, `plugins/fly`, and
 `plugins/sprites` to make both entries available.
 
-Installing Fly.io is opt-in: existing Sprites settings, package identity, and
-endpoint remain unchanged. Fly.io needs its own authorization. After checking
+### Migrating from the old `sprites` catalog
+
+Older installations can stay on their existing revision. To opt into the renamed
+catalog, remove the old registration and add this repository again:
+
+```sh
+codex plugin marketplace remove sprites
+codex plugin marketplace add superfly/sprites-codex-plugin
+codex plugin add fly@flyio
+```
+
+For a local checkout, use `codex plugin marketplace add .` from the repository
+root instead of adding the Git source. To keep using Sprites, install
+`sprites@flyio` instead of `fly@flyio`. Complete authorization for the new
+installation. The old `fly@sprites` and `sprites@sprites` identifiers are not
+aliases for the renamed catalog.
+
+Installing Fly.io is opt-in. Each plugin keeps its own package identity and
+endpoint. Fly.io needs its own authorization. After checking
 that Fly.io can access the resources you need, disable or uninstall Sprites to
 avoid overlapping Sprite tools and instructions. Do not assume their grants
 are interchangeable. Switching plugins does not delete remote resources.
